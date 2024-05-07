@@ -1,5 +1,6 @@
 import random
 import string
+import pyperclip
 
 master_password = "12345"
 
@@ -26,9 +27,16 @@ while loop:
     print("1. Generate and Store Password\n2. View Saved Passwords\n3. Exit")
     # user input one of follwing options
     option = input()
+    
     if option == "1":
+        
+        print("Please enter which website or application the password will be used for:")
+        domain = input()
         generated_password = generate_random_password()
-        print(generated_password)
+        # copys generated password to clipboard
+        pyperclip.copy(generated_password)
+        
+        print("Randomly generated password has been copied to clipboard.")
     elif option == "2":
         print("Please enter the master password: ")
         
