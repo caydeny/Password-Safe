@@ -3,14 +3,38 @@ import string
 import pyperclip
 import sqlite3
 
+MAX_ATTEMPTS = 3
+
+def generate_random_password():
+    length = random.randint(15, 25) 
+    characters = string.ascii_letters + string.digits + string.punctuation
+    password = ''.join(random.choice(characters) for _ in range(length))
+    return password
+
+def check_password(user_password):
+    if user_password == master_password:
+        return True
+    else:
+        return False
+    
+print(r"""
+  _  __                  ____                             _ 
+ | |/ /   ___   _   _   / ___|  _   _    __ _   _ __   __| |
+ | ' /   / _ \ | | | | | |  _  | | | |  / _` | | '__| / _` |
+ | . \  |  __/ | |_| | | |_| | | |_| | | (_| | | |   | (_| |
+ |_|\_\  \___|  \__, |  \____|  \__,_|  \__,_| |_|    \__,_|
+                |___/  
+""")
+
+# create database using sqlite3
 conn = sqlite3.connect('password.db')
 curr = conn.cursor()
 
-# Check if the table already exists
+# check if the table already exists
 curr.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='passwords'")
 table_exists = curr.fetchone()
 
-# If the table doesn't exist, create it
+# create table if it does not already exist
 if not table_exists:
     curr.execute("""CREATE TABLE passwords (
                     Website text,
@@ -18,7 +42,7 @@ if not table_exists:
                     )""")
     conn.commit()
 
-# Check if the settings table already exists
+# check if the settings table already exists
 curr.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='settings'")
 settings_table_exists = curr.fetchone()
 
@@ -35,19 +59,13 @@ else:
     curr.execute("SELECT master_password FROM settings")
     master_password = curr.fetchone()[0]
 
-def generate_random_password():
-    length = random.randint(15, 100) 
-    characters = string.ascii_letters + string.digits + string.punctuation
-    password = ''.join(random.choice(characters) for _ in range(length))
-    return password
 
-def check_password(user_password):
-    if user_password == master_password:
-        return True
-    else:
-        return False
 
-print("PASSWORD MANAGER")
+
+
+
+
+
 
 loop = True
 
@@ -57,18 +75,24 @@ while loop:
     option = input()
     
     if option == "1":
-        domain = input("Please enter which website or application the password will be used for:" )
+
+        domain = input("Please enter which website or application the password will be used for: " )
+        # generate a random password and store into database under domain name
         generated_password = generate_random_password()
         curr.execute("INSERT INTO passwords VALUES (?, ?)", (domain, generated_password))
         conn.commit()
+        # copy to clipboard so it can immediately be pasted
         pyperclip.copy(generated_password)
         print("Randomly generated password has been copied to clipboard.")
+
     elif option == "2":
-        print("Please enter the master password: ")
+
         attempt = 0
-        while attempt < 3:
-            user_password = input()
+
+        while attempt < MAX_ATTEMPTS:
+            user_password = input("Please enter the master password: ")
             if check_password(user_password) == True:
+                # fetch all passwords saved and print
                 curr.execute("SELECT * FROM passwords")
                 print(curr.fetchall())
                 break
@@ -80,7 +104,7 @@ while loop:
                     exit()
     elif option == "3":
         conn.close()
-        print("Thank you for using PassVault.")
+        print("Thank you for using KeyGuard.")
         loop = False
     else:
         print("Please enter a valid option.")
