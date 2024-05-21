@@ -1,22 +1,55 @@
+# Required libraries
 import random
 import string
 import pyperclip
 import sqlite3
 
+# Global constant variables
 MAX_ATTEMPTS = 3
 
+# Functions
 def generate_random_password():
     length = random.randint(15, 25) 
     characters = string.ascii_letters + string.digits + string.punctuation
-    password = ''.join(random.choice(characters) for _ in range(length))
+    password = ''.join(random.choice(characters) for _ in range(length))        # make sure this satisfies most password criteria, e.g. 2 captial letters, special character, etc.
     return password
+
+def store_password():
+    domain = input("Please enter which website or application the password will be used for: " )
+    # generate a random password and store into database under domain name
+    generated_password = generate_random_password()
+    curr.execute("INSERT INTO passwords VALUES (?, ?)", (domain, generated_password))
+    conn.commit()
+    # copy to clipboard so it can immediately be pasted
+    pyperclip.copy(generated_password)
+    print("Randomly generated password has been copied to clipboard.")
+
 
 def check_password(user_password):
     if user_password == master_password:
         return True
     else:
         return False
-    
+
+
+def view_password():
+    attempt = 0
+
+    while attempt < MAX_ATTEMPTS:
+        user_password = input("Please enter the master password: ")
+        if check_password(user_password) == True:
+            # fetch all passwords saved and print
+            curr.execute("SELECT * FROM passwords")
+            print(curr.fetchall())
+            break
+        else:
+            print("Password incorrect. x attempts remaining.")
+            attempt += 1
+            if attempt == 3:
+                print("Maximum attempts exceeded. Terminating program.")
+                exit()
+                
+# Start of program
 print(r"""
   _  __                  ____                             _ 
  | |/ /   ___   _   _   / ___|  _   _    __ _   _ __   __| |
@@ -26,7 +59,7 @@ print(r"""
                 |___/  
 """)
 
-# create database using sqlite3
+# Create database using sqlite3
 conn = sqlite3.connect('password.db')
 curr = conn.cursor()
 
@@ -66,45 +99,38 @@ else:
 
 
 
-
 loop = True
 
 while loop:
+    # Print menu with options for user
     print("Select one of the following options: ")
-    print("1. Generate and Store Password\n2. View Saved Passwords\n3. Exit")
-    option = input()
+    option = input("1. Generate and Store Password\n2. View Passwords\n3. Exit\n")
     
     if option == "1":
-
-        domain = input("Please enter which website or application the password will be used for: " )
-        # generate a random password and store into database under domain name
-        generated_password = generate_random_password()
-        curr.execute("INSERT INTO passwords VALUES (?, ?)", (domain, generated_password))
-        conn.commit()
-        # copy to clipboard so it can immediately be pasted
-        pyperclip.copy(generated_password)
-        print("Randomly generated password has been copied to clipboard.")
+        store_password()
+        
 
     elif option == "2":
+        sub_option = input("Select one of the following options:\n1. View Passwords\n2. Change Password\n3. Delete Password\n4. Back...\n")
+        
+        # Sub-menu of options
+        if sub_option == "1":
+            view_password()
+        elif sub_option == "2":
+            # change_password()
+            break
+        elif sub_option == "3":
+            # delete_password()
+            break
+        elif sub_option == "4":
+            continue
 
-        attempt = 0
-
-        while attempt < MAX_ATTEMPTS:
-            user_password = input("Please enter the master password: ")
-            if check_password(user_password) == True:
-                # fetch all passwords saved and print
-                curr.execute("SELECT * FROM passwords")
-                print(curr.fetchall())
-                break
-            else:
-                print("Password incorrect. x attempts remaining.")
-                attempt += 1
-                if attempt == 3:
-                    print("Maximum attempts exceeded. Terminating program.")
-                    exit()
     elif option == "3":
         conn.close()
         print("Thank you for using KeyGuard.")
         loop = False
+
     else:
         print("Please enter a valid option.")
+
+
