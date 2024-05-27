@@ -23,6 +23,47 @@ def store_password():
     # copy to clipboard so it can immediately be pasted
     pyperclip.copy(generated_password)
     print("Randomly generated password has been copied to clipboard.")
+#
+#   create a check to make sure that a password for application does not already exist
+#
+
+def update_password():
+    domain = input("Please enter the website that you wish to update the password for: ")
+    
+    # Check if the domain exists in the database
+    curr.execute("SELECT * FROM passwords WHERE Website=?", (domain,))
+    result = curr.fetchone()
+    
+    if result:
+        # Generate a new random password
+        new_password = generate_random_password()
+        
+        # Update the password in the database
+        curr.execute("UPDATE passwords SET Password=? WHERE Website=?", (new_password, domain))
+        conn.commit()
+        
+        # Copy the new password to the clipboard
+        pyperclip.copy(new_password)
+        print("Password updated successfully. The new password has been copied to the clipboard.")
+    else:
+        print("No entry found for the specified website.")
+
+def delete_password():
+    domain = input("Please enter the website that you wish to delete the password for: ")
+    
+    # Check if the domain exists in the database
+    curr.execute("SELECT * FROM passwords WHERE Website=?", (domain,))
+    result = curr.fetchone()
+    
+    if result:
+        # Delete the password entry from the database
+        curr.execute("DELETE FROM passwords WHERE Website=?", (domain,))
+        conn.commit()
+        print("Password for '{}' has been deleted.".format(domain))
+    else:
+        print("No entry found for the specified website.")
+
+
 
 
 def check_password(user_password):
@@ -37,7 +78,7 @@ def view_password():
 
     while attempt < MAX_ATTEMPTS:
         user_password = input("Please enter the master password: ")
-        if check_password(user_password) == True:
+        if check_password(user_password) == True: # if empty return 
             # fetch all passwords saved and print
             curr.execute("SELECT * FROM passwords")
             print(curr.fetchall())
@@ -117,11 +158,9 @@ while loop:
         if sub_option == "1":
             view_password()
         elif sub_option == "2":
-            # change_password()
-            break
+            update_password()
         elif sub_option == "3":
-            # delete_password()
-            break
+            delete_password()
         elif sub_option == "4":
             continue
 
