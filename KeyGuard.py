@@ -3,6 +3,35 @@ import random
 import string
 import pyperclip
 import sqlite3
+import tkinter as tk
+
+# TKINTER CREATING A WINDOW
+root = tk.Tk()
+root.geometry("400x750")
+root.title("KeyGuard")
+
+label = tk.Label(root, text="Password Manager", font=('Arial, 18'))
+label.pack(padx = 20, pady = 20)
+
+buttonFrame = tk.Frame(root) # root is the master
+buttonFrame.columnconfigure(0, weight = 1)
+buttonFrame.columnconfigure(1, weight = 1)
+
+button1 = tk.Button(buttonFrame, text = '1', font = ('Arial', 18)) # buttonFrame is the master
+button1.grid(row = 0, column = 0, sticky = "news")
+button2 = tk.Button(buttonFrame, text = '2', font = ('Arial', 18))
+button2.grid(row = 1, column = 0, sticky = "news")
+button3 = tk.Button(buttonFrame, text = '3', font = ('Arial', 18))
+button3.grid(row = 2, column = 0, sticky = "news")
+
+buttonFrame.pack(fill='x')
+
+#textbox = tk.Text(root, font=('Arial', 14))
+#textbox.pack(padx=10, pady=10)
+
+
+
+root.mainloop()
 
 # Global constant variables
 MAX_ATTEMPTS = 3
