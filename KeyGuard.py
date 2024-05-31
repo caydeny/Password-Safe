@@ -4,34 +4,62 @@ import string
 import pyperclip
 import sqlite3
 import tkinter as tk
+from tkinter import messagebox
+class myGUI:
+    def __init__(self):
+
+        self.root = tk.Tk()
+
+        self.label = tk.Label(self.root, text = "Your Message", font = ('Ariel', 18))
+        self.label.pack(padx = 10, pady = 10)
+
+        self.textbox = tk.Text(self.root, font = ('Arial', 16))
+        self.textbox.pack(padx = 10, pady = 10)
+
+        self.checkState = tk.IntVar()
+
+        self.check = tk.Checkbutton(self.root, text = "Show messagebox", font = ('Arial', 16), variable = self.checkState)
+        self.check.pack(padx = 10, pady = 10)
+
+        self.button = tk.Button(self.root, text = "Show Message", font = ('Arial', 18), command = self.showMessage)
+        self.button.pack(padx = 10, pady = 10)
+
+        self.root.mainloop()
+
+    def showMessage(self):
+        if self.checkState.get() == 0:
+            print(self.textbox.get('1.0', tk.END))
+        else:
+            messagebox.showinfo(title = "Message", message = self.textbox.get('1.0', tk.END))
+
+myGUI()
 
 # TKINTER CREATING A WINDOW
-root = tk.Tk()
-root.geometry("400x750")
-root.title("KeyGuard")
+#root = tk.Tk()
+#root.geometry("400x750")
+#root.title("KeyGuard")
 
-label = tk.Label(root, text="Password Manager", font=('Arial, 18'))
-label.pack(padx = 20, pady = 20)
+#label = tk.Label(root, text="Password Manager", font=('Arial, 18'))
+#label.pack(padx = 20, pady = 20)
 
-buttonFrame = tk.Frame(root) # root is the master
-buttonFrame.columnconfigure(0, weight = 1)
-buttonFrame.columnconfigure(1, weight = 1)
+#buttonFrame = tk.Frame(root) # root is the master
+#buttonFrame.columnconfigure(0, weight = 1)
 
-button1 = tk.Button(buttonFrame, text = '1', font = ('Arial', 18)) # buttonFrame is the master
-button1.grid(row = 0, column = 0, sticky = "news")
-button2 = tk.Button(buttonFrame, text = '2', font = ('Arial', 18))
-button2.grid(row = 1, column = 0, sticky = "news")
-button3 = tk.Button(buttonFrame, text = '3', font = ('Arial', 18))
-button3.grid(row = 2, column = 0, sticky = "news")
+#button1 = tk.Button(buttonFrame, text = '1', font = ('Arial', 18)) # buttonFrame is the master
+#button1.grid(row = 0, column = 0, sticky = "news")
+#button2 = tk.Button(buttonFrame, text = '2', font = ('Arial', 18))
+#button2.grid(row = 1, column = 0, sticky = "news")
+#button3 = tk.Button(buttonFrame, text = '3', font = ('Arial', 18))
+#button3.grid(row = 2, column = 0, sticky = "news")
 
-buttonFrame.pack(fill='x')
+#buttonFrame.pack(fill='x')
 
 #textbox = tk.Text(root, font=('Arial', 14))
 #textbox.pack(padx=10, pady=10)
 
 
 
-root.mainloop()
+#root.mainloop()
 
 # Global constant variables
 MAX_ATTEMPTS = 3
