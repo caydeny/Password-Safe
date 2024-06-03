@@ -9,8 +9,9 @@ class myGUI:
     def __init__(self):
 
         self.root = tk.Tk()
+        self.root.geometry("750x400")
 
-        self.label = tk.Label(self.root, text = "Your Message", font = ('Ariel', 18))
+        self.label = tk.Label(self.root, text = "Password Manager", font = ('Ariel', 22))
         self.label.pack(padx = 10, pady = 10)
 
         self.textbox = tk.Text(self.root, font = ('Arial', 16))
